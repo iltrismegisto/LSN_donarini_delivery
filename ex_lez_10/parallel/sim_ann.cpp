@@ -66,9 +66,6 @@ int main(int argc, char* argv[]){
     accepted_1 = 0;
     accepted_2 = 0;
     for (size_t j = 0; j < steps_per_T; j++) {
-
-      int mig = Random()*steps_per_T;
-
       new_gene = gene;
       new_gene.Mutation_Pair();
       A = min(1.,exp(-(new_gene.Cost()-gene.Cost())/temp));
@@ -86,32 +83,7 @@ int main(int argc, char* argv[]){
         accepted_2 ++;}
       if(best_gene.Cost()>gene.Cost()) best_gene=gene;
 
-      if (j==mig) {
-        int w1 = Random()*4;
-        int w2 = Random()*4;
-        if (w1==w2){
-          w2 = Random()*4;
-        }
-
-        Gene temp1;
-        Gene temp2;
-
-        while (rank != w1){
-          temp1 = best_gene;
-        }
-
-        while (rank != w2) {
-          temp2=best_gene;
-          best_gene=temp1;
-        }
-
-        while (rank != w1) {
-          best_gene=temp2;
-        }
-      }
     }
-
-
     node_cost = best_gene.Cost();
     MPI_Gather(&node_cost,1,MPI_DOUBLE_PRECISION,node_cost_array,1,MPI_DOUBLE_PRECISION,0,MPI::COMM_WORLD);
     if(rank==0){
@@ -123,7 +95,6 @@ int main(int argc, char* argv[]){
         }
       }
     }
-
 
     if(rank==0) output << setw(wd) << temperature_steps-i <<  setw(wd) << best_gene_cost << endl;
     if(rank==0) out_best_rank << setw(wd) << temperature_steps-i <<  setw(wd) << best_rank << endl;
@@ -139,6 +110,7 @@ int main(int argc, char* argv[]){
   MPI_Bcast(&best_rank, 1, MPI_INTEGER, 0, MPI::COMM_WORLD);
 
   if(rank==0) cout<< "**** Best gene has cost: " << best_gene_cost << endl << endl;
+
 
   if (rank==best_rank) {
     if (temp_init==1) {

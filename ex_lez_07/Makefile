@@ -9,3 +9,4 @@ random.o : random.cpp random.h
 	$(CC) -c random.cpp -o random.o $(CFLAGS)
 clean :
 	rm *.o Monte_Carlo_NVT.exe
+ 
