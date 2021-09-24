@@ -1,0 +1,21 @@
+0
+1
+solid
+0.8
+108
+1.1
+2.2
+0.0005
+10000
+1000
+  ReadInput >> restart;
+  ReadInput >> real_measure;
+  ReadInput >> phase;
+  ReadInput >> temp;
+  ReadInput >> npart;
+  ReadInput >> rho;
+  ReadInput >> rcut;
+  ReadInput >> delta;
+  ReadInput >> nstep;
+  ReadInput >> iprint;
+  

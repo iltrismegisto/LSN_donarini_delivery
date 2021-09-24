@@ -1,0 +1,16 @@
+3000
+32
+300
+15
+5
+0.9
+0.1
+1
+    1 input >> dim;
+    2 input >> num_city;
+    3 input >> num_generations;
+    4 input >> saved_per_generation;
+    5 input >> selection_exp;
+    6 input >> cross_rate;
+    7 input >> mutation_rate;
+    8 input >> mode; //0 circumference ; 1 squared
