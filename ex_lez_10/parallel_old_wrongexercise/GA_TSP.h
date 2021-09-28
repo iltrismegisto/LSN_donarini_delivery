@@ -8,15 +8,15 @@
 
 using namespace std;
 
-int dim ;
-int num_city;
 int wd=18;
-int saved_per_generation;
-double selection_exp;
-double cross_rate;
-double mutation_rate;
-int num_generations;
-int mode;
+int num_city=32;
+double temp_init;
+int temperature_steps;
+int steps_per_T;
+double temp;
+int mode = 0;
+double A=0;
+int accepted_1 = 0,accepted_2 = 0;
 
 double inline Random(){
     return rand()/(double)RAND_MAX;
@@ -102,6 +102,19 @@ class Gene{
       cout << "City #" << gene[i].GetIndex() << " at ("<<  gene[i].GetX() << " , " << gene[i].GetY() << ")"<< endl;
     }
     cout << "Cost: " << Cost() << " $"<< endl;
+  }
+
+  void Mutation_Pair(){
+    int where = 1+Random()*(GetLength()-2);
+    SwapCity(where,where+1);
+  }
+
+  void Mutation_Inversion(){
+    int how_many = 3;
+    int where = 1+Random()*(GetLength()-how_many-1);
+    for ( size_t i=0 ; i <= int(how_many/2) ; i++ ){
+      SwapCity(where+i, where+how_many-i);
+    }
   }
 
   private:
@@ -228,7 +241,6 @@ class Population {
     a.AddElement(x.GetElement(i));
     b.AddElement(y.GetElement(i));
   }
-
   while( a.GetLength() < length){
     for( size_t i=0 ; i < length ; i++ ){
       bool nw = true;
@@ -274,48 +286,46 @@ class Population {
   vector<Gene> population;
 };
 
-void Input(int rank) {
+void Input(int rank, vector<City> *cities ) {
 
-  if(rank==0) cout << "---START GENETIC ALGORITHM---" << endl;
+  if(rank==0) cout << "---START SIMULATED ANNEALING---" << endl;
   ifstream input;
   input.open("input.dat");
 
-  input >> dim;
-  if(rank==0) cout << "Population dimensions = " << dim << endl;
   input >> num_city;
-  if(rank==0) cout << "Num city = " << num_city << endl;
-  input >> num_generations;
-  if(rank==0) cout << "Number generations = " << num_generations << endl << endl;
-  input >> saved_per_generation;
-  input >> selection_exp;
-  input >> cross_rate;
-  input >> mutation_rate;
+  if(rank==0) cout << "Num city : " << num_city << endl;
+
+  input >> temp_init;
+  if(rank==0) cout << "Initial temperature : " << temp_init << endl;
+  input >> temperature_steps;
+  if(rank==0) cout << "Temperature steps = " << temperature_steps << endl;
+  input >> steps_per_T;
+  if(rank==0) cout << "Steps at fixed temperature = " << steps_per_T << endl;
   input >> mode;
-    if(rank==0) {
+  if(rank==0) {
       if (mode==0) {
       cout << "Mode = Circle" << endl << endl;
     } else {
       cout << "Mode = Square" << endl << endl;
     }
-    }
+  }
   input.close();
 
   if(mode == 0) {   //Cities on a circumference
     double angle = 2*M_PI/double(num_city);
-    cout << "Cities generated on a circumference "<< endl << endl;
+    if(rank==0) cout << "Cities generated on a circumference "<< endl << endl;
     for (size_t i=0; i<num_city; i++){
       City city = City(cos(angle*i), sin(angle*i) ,i);
-      cities.push_back(city);
+      cities->push_back(city);
     }
   }
 
   if(mode == 1) {   //Cities inside a square
-    cout << "Cities generated inside a square "<< endl << endl;
+    if(rank==0) cout << "Cities generated inside a square "<< endl << endl;
     for (size_t i=0; i<num_city; i++){
       City city = City(Random(), Random() ,i);
-      cities.push_back(city);
+      cities->push_back(city);
     }
   }
 
 }
-
